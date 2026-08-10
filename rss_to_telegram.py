@@ -20,7 +20,7 @@ MAX_POSTS = int(os.environ.get("MAX_POSTS", "15"))            # أقصى عدد 
 
 # ---------- أضف روابط RSS الخاصة بك هنا ----------
 FEEDS = [
-    "https://www.bayt.com/associates/rss/feed.xml?aff_id=1458967&country_list=all&jobrole_list=all",            # وظائف مصر
+    ""https://feeds.bbci.co.uk/arabic/rss.xml",",            # وظائف مصر
     ]
 
 
