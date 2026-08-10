@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-JustHireMe - RSS to Telegram
-يسحب الوظائف الجديدة من روابط RSS وينشرها تلقائيًا في قناتك على تليجرام.
-مجاني 100% - يعمل عبر GitHub Actions يوميًا.
-"""
 import os
 import time
 from datetime import datetime, timezone, timedelta
@@ -11,21 +6,21 @@ from datetime import datetime, timezone, timedelta
 import feedparser
 import requests
 
-# ---------- الإعدادات (تُقرأ من متغيرات البيئة / Secrets) ----------
-BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]          # توكن البوت من BotFather
-CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]              # مثال: @JustHireMe
+BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
+CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 
-LOOKBACK_HOURS = int(os.environ.get("LOOKBACK_HOURS", "26"))  # نشر وظائف آخر 26 ساعة
-MAX_POSTS = int(os.environ.get("MAX_POSTS", "15"))            # أقصى عدد منشورات في اليوم
+LOOKBACK_HOURS = int(os.environ.get("LOOKBACK_HOURS", "26"))
+MAX_POSTS = int(os.environ.get("MAX_POSTS", "15"))
 
-# ---------- أضف روابط RSS الخاصة بك هنا ----------
 FEEDS = [
-    ""https://feeds.bbci.co.uk/arabic/rss.xml",",            # وظائف مصر
-    ]
+    "https://feeds.bbci.co.uk/arabic/rss.xml",  # للتجربة فقط — احذفه بعد التأكد
+    "https://www.indeed.com/rss?q=&l=Egypt",
+    "https://www.indeed.com/rss?q=&l=Riyadh",
+    "https://www.indeed.com/rss?q=&l=Dubai",
+]
 
 
 def entry_time(entry):
-    """استخراج وقت نشر الخبر بتوقيت UTC"""
     for attr in ("published_parsed", "updated_parsed"):
         t = entry.get(attr)
         if t:
@@ -34,7 +29,6 @@ def entry_time(entry):
 
 
 def send_to_telegram(text):
-    """إرسال منشور إلى القناة"""
     r = requests.post(
         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
         json={
@@ -57,6 +51,7 @@ def main():
         try:
             feed = feedparser.parse(url)
             feed_title = feed.feed.get("title", "مصدر الوظائف")
+            print(f"📡 المصدر {feed_title}: فيه {len(feed.entries)} عنصر")
         except Exception as ex:
             print(f"[خطأ في المصدر] {url}: {ex}")
             continue
@@ -66,7 +61,6 @@ def main():
             if t and t >= cutoff:
                 items.append((t, e, feed_title))
 
-    # ترتيب من الأحدث للأقدم + حد أقصى للمنشورات
     items.sort(key=lambda x: x[0], reverse=True)
     items = items[:MAX_POSTS]
 
@@ -84,7 +78,7 @@ def main():
             send_to_telegram(msg)
             sent += 1
             print(f"📤 تم النشر: {title}")
-            time.sleep(1.5)  # لتجنب حد معدل الإرسال في تليجرام
+            time.sleep(1.5)
         except Exception as ex:
             print(f"[فشل الإرسال] {title}: {ex}")
 
