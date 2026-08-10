@@ -13,7 +13,7 @@ LOOKBACK_HOURS = int(os.environ.get("LOOKBACK_HOURS", "26"))
 MAX_POSTS = int(os.environ.get("MAX_POSTS", "15"))
 
 FEEDS = [
-    "https://feeds.bbci.co.uk/arabic/rss.xml",  # للتجربة فقط — احذفه بعد التأكد
+    "https://www.bayt.com/associates/rss/feed.xml?aff_id=1458967&country_list=all&jobrole_list=all",  # للتجربة فقط — احذفه بعد التأكد
     "https://www.indeed.com/rss?q=&l=Egypt",
     "https://www.indeed.com/rss?q=&l=Riyadh",
     "https://www.indeed.com/rss?q=&l=Dubai",
